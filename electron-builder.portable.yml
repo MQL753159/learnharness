@@ -1,0 +1,18 @@
+# pt-BR fork: Windows PORTABLE build (used by .github/workflows/windows-portable.yml).
+# Inherits everything from electron-builder.yml and overrides only Windows:
+# no installer — the single self-extracting .exe and the unzip-and-run
+# folder. Both keep their data beside the program (electron/main.cjs,
+# PORTABLE MODE); the portable.txt marker is how the folder build
+# recognizes itself.
+extends: ./electron-builder.yml
+# The targets (portable + zip) are chosen on the command line — `extends`
+# concatenates target lists, so listing them here would keep the inherited
+# NSIS installer too:
+#   electron-builder --config electron-builder.portable.yml --win portable zip --x64
+win:
+  extraFiles:
+    - from: build/portable.txt
+      to: portable.txt
+  artifactName: "${productName}-${version}-windows-${arch}.${ext}"
+portable:
+  artifactName: "${productName}-${version}-portatil.exe"

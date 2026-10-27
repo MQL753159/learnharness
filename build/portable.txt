@@ -1,0 +1,8 @@
+LearnHarness portátil
+
+Este arquivo indica que o LearnHarness está rodando no modo portátil:
+conversas, grafo de conhecimento, configurações e chaves de API ficam na
+pasta "LearnHarness-dados", ao lado do LearnHarness.exe.
+
+Para levar tudo para outro computador ou pendrive, copie a pasta inteira.
+Não apague este arquivo.

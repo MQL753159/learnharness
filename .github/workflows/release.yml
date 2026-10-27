@@ -21,6 +21,8 @@ env:
 jobs:
   quality:
     name: Release gates
+    # The upstream installer release; forks build with windows-portable.yml.
+    if: github.repository == 'amosblomqvist/learnharness'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:

@@ -1,0 +1,73 @@
+name: Windows portátil
+
+# Gera o LearnHarness portátil para Windows (pt-BR fork):
+#   - LearnHarness-<versão>-portatil.exe      (arquivo único, clique duplo)
+#   - LearnHarness-<versão>-windows-x64.zip   (pasta: descompacte e rode)
+# Todo push no ramo pt-br/main deixa os dois arquivos como "artifact" da
+# execução (aba Actions). Uma tag v* também publica uma Release com eles.
+
+on:
+  push:
+    branches: [pt-br, main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: windows-portable-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  build:
+    name: Build portátil (Windows x64)
+    runs-on: windows-2025
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "26"
+          cache: npm
+      - run: npm ci
+      - name: Native renderer tests on Windows
+        run: npx electron --import tsx --test tests/pdf-native-render.test.ts tests/pdf-ops.test.ts tests/svg-native-render.test.ts tests/browser-service.test.ts
+        env:
+          NODE_ENV: test
+          ELECTRON_RUN_AS_NODE: "1"
+      - run: npm run build
+      - run: node scripts/smoke-provider-runtime.mjs
+      - run: node scripts/build-server.mjs
+      - run: node scripts/smoke-server.mjs --electron
+      - name: Package (portable .exe + .zip)
+        run: npx electron-builder --config electron-builder.portable.yml --win portable zip --x64 --publish never
+      - name: Check the folder build carries its portable marker
+        shell: pwsh
+        run: |
+          $zip = Get-ChildItem dist/*-windows-x64.zip | Select-Object -First 1
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $names = [IO.Compression.ZipFile]::OpenRead($zip.FullName).Entries.FullName
+          if (-not ($names -match 'portable\.txt$')) { throw "portable.txt missing from $($zip.Name)" }
+      - uses: actions/upload-artifact@v7
+        with:
+          name: LearnHarness-windows-portatil
+          path: |
+            dist/*-portatil.exe
+            dist/*-windows-x64.zip
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish release (tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/*-portatil.exe dist/*-windows-x64.zip \
+            --repo "$GITHUB_REPOSITORY" --title "LearnHarness $GITHUB_REF_NAME (portátil, pt-BR)" \
+            --notes "Baixe o .exe (arquivo único) ou o .zip (descompacte e rode LearnHarness.exe). Os dados ficam na pasta LearnHarness-dados, ao lado do programa."

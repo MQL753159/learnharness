@@ -51,6 +51,25 @@ const PRODUCT_NAME = "LearnHarness";
 // Must run before the LH_DEV_URL suffix below — dev becomes
 // "LearnHarness-dev".
 app.setName(PRODUCT_NAME);
+
+// PORTABLE MODE (pt-BR fork): everything the app keeps — sessions, graph,
+// settings, API keys, logs — lives in "LearnHarness-dados" BESIDE the
+// program, so copying the folder (or a pen drive) carries it all. The
+// single-file portable .exe extracts itself to a temp dir and reports its
+// real location in PORTABLE_EXECUTABLE_DIR; the unzipped folder build is
+// recognized by the portable.txt marker shipped next to LearnHarness.exe.
+// Must run before anything reads userData (lock, auth file, data dir).
+const PORTABLE_DIR = (() => {
+	if (!app.isPackaged) return null;
+	if (process.env.PORTABLE_EXECUTABLE_DIR) return process.env.PORTABLE_EXECUTABLE_DIR;
+	try {
+		const exeDir = path.dirname(process.execPath);
+		return fs.existsSync(path.join(exeDir, "portable.txt")) ? exeDir : null;
+	} catch {
+		return null; // no resolvable executable location → the regular userData
+	}
+})();
+if (PORTABLE_DIR) app.setPath("userData", path.join(PORTABLE_DIR, "LearnHarness-dados"));
 const AUTH_FILE = () => path.join(app.getPath("userData"), "auth.json");
 const DATA_DIR = () => path.join(app.getPath("userData"), "data");
 
@@ -506,6 +525,14 @@ function installUpdateNow() {
 function setupAutoUpdater() {
 	if (!app.isPackaged) {
 		log("auto-update: dev build — updater disabled");
+		reportUpdateStatus("disabled");
+		return;
+	}
+	// Portable builds never self-update: the feed is the ORIGINAL project's
+	// releases (English, installer-shaped) — an update would replace this
+	// fork. New versions are downloaded by hand from the fork's releases.
+	if (PORTABLE_DIR) {
+		log("auto-update: portable build — updater disabled");
 		reportUpdateStatus("disabled");
 		return;
 	}
