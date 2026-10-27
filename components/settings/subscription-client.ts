@@ -11,12 +11,12 @@ const headers = { "Content-Type": "application/json", "x-learnharness-subscripti
 
 async function status() {
 	const response = await fetch(PATH, { headers, cache: "no-store" });
-	if (!response.ok) throw new Error("Subscription status is unavailable.");
+	if (!response.ok) throw new Error("O status da assinatura não está disponível.");
 	return response.json() as Promise<{ chatgpt: ChatGPTStatus; native: NativeSubscriptionStatus[] }>;
 }
 async function control<T>(providerId: string, op: string, fields: Record<string, unknown> = {}): Promise<Reply<T>> {
 	const response = await fetch(PATH, { method: "POST", headers, body: JSON.stringify({ providerId, op, ...fields }) });
-	if (!response.ok) throw new Error("The subscription connection could not be changed.");
+	if (!response.ok) throw new Error("Não foi possível alterar a conexão por assinatura.");
 	return response.json() as Promise<Reply<T>>;
 }
 function onChange(hub: Hub, listener: () => void): () => void {
@@ -30,15 +30,15 @@ function onChange(hub: Hub, listener: () => void): () => void {
 async function withBrowser<T>(action: () => Promise<Reply<T>>): Promise<T> {
 	const external = window.lh?.subscriptionTransport === "web" ? window.lh.openSubscriptionBrowser : undefined;
 	const tab = external ? null : window.open("about:blank", "_blank");
-	if (!external && !tab) throw new Error("Allow a sign-in tab to open, then try again.");
+	if (!external && !tab) throw new Error("Permita que uma aba de login seja aberta e tente de novo.");
 	if (tab) tab.opener = null;
 	try {
 		const reply = await action();
 		if (reply.browserAction) {
-			if (!/^\/api\/subscriptions\/browser\?id=[0-9a-f-]{36}$/.test(reply.browserAction)) throw new Error("Invalid sign-in action.");
+			if (!/^\/api\/subscriptions\/browser\?id=[0-9a-f-]{36}$/.test(reply.browserAction)) throw new Error("Ação de login inválida.");
 			if (external) await external(reply.browserAction);
 			else if (tab && !tab.closed) tab.location.href = reply.browserAction;
-			else throw new Error("The sign-in tab was closed. Cancel and try again.");
+			else throw new Error("A aba de login foi fechada. Cancele e tente de novo.");
 		} else tab?.close();
 		return reply.value;
 	} catch (error) { tab?.close(); throw error; }

@@ -33,19 +33,19 @@ export const AUTH_KEYS: readonly AuthKeyInfo[] = [
 	{
 		id: "DEEPGRAM_API_KEY",
 		label: "Deepgram",
-		description: "Speech-to-text key for dictation — needs ≥ Member permission in the Deepgram console to mint tokens.",
+		description: "Chave de voz para texto do ditado — precisa de permissão ≥ Member no console da Deepgram para gerar tokens.",
 		docsUrl: "https://console.deepgram.com/",
 	},
 	{
 		id: "TAVILY_API_KEY",
 		label: "Tavily",
-		description: "Web-search engine for the researcher sub-agent (AI-native search API). Setting the key activates it — no engine toggle needed.",
+		description: "Mecanismo de busca na web do subagente pesquisador (API de busca feita para IA). Cadastrar a chave já o ativa — não é preciso ligar nada.",
 		docsUrl: "https://app.tavily.com/",
 	},
 	{
 		id: "BRAVE_API_KEY",
 		label: "Brave Search",
-		description: "Web-search engine for the researcher sub-agent — the alternative to Tavily. Setting the key activates it.",
+		description: "Mecanismo de busca na web do subagente pesquisador — a alternativa ao Tavily. Cadastrar a chave já o ativa.",
 		docsUrl: "https://brave.com/search/api/",
 	},
 ] as const;
@@ -152,12 +152,12 @@ export function validateKeyShape(id: string, rawValue: string): KeyShapeResult {
 	const nonEmpty = (min: number) =>
 		value.length >= min && !/\s/.test(value)
 			? { ok: true as const }
-			: { ok: false as const, error: `${id} must be at least ${min} characters with no whitespace` };
+			: { ok: false as const, error: `${id} precisa ter pelo menos ${min} caracteres, sem espaços` };
 	switch (id) {
 		case "TAVILY_API_KEY":
 			return value.startsWith("tvly-")
 				? nonEmpty(20)
-				: { ok: false, error: `${id} must start with "tvly-" (Tavily's key format)` };
+				: { ok: false, error: `${id} precisa começar com "tvly-" (formato de chave do Tavily)` };
 		case "BRAVE_API_KEY":
 			// No public format — a length floor + paste hygiene only.
 			return nonEmpty(20);

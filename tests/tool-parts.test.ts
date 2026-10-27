@@ -131,7 +131,7 @@ describe("parseQuizInput", () => {
 
 describe("parseAskInput", () => {
 	it("parses free-text mode (no options) and option mode", () => {
-		assert.ok(parseAskInput({ question: "What do you want to learn?" }));
+		assert.ok(parseAskInput({ question: "O que você quer aprender?" }));
 		assert.ok(parseAskInput({ question: "Which topics?", options: [{ label: "Physics" }, { label: "Logic" }], multiSelect: true }));
 	});
 

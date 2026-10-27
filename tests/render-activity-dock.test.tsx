@@ -85,20 +85,20 @@ describe("activity dock pure layer", () => {
 			status: "error",
 			activity: "failed",
 			// the runner composes the envelope's error verbatim (invariant tail)
-			error: "No OpenRouter key is set — add one in Settings → Keys",
+			error: "Nenhuma chave de OpenRouter cadastrada — adicione uma em Configurações → Provedores",
 		});
 		const blob = toBlobs({ jobs: [refused], extractions: [] })[0]!;
-		assert.equal(blob.activity, "needs a provider key");
+		assert.equal(blob.activity, "precisa de uma chave de provedor");
 	});
 
 	it("a models-refused job reads as info — 'needs model setup', not 'failed' (BYOK, 2026-09-22)", () => {
 		const refused = job({
 			status: "error",
 			activity: "failed",
-			error: "No model configured — set up your models first (missing: vision)",
+			error: "Nenhum modelo configurado — configure seus modelos primeiro (missing: vision)",
 		});
 		const blob = toBlobs({ jobs: [refused], extractions: [] })[0]!;
-		assert.equal(blob.activity, "needs model setup");
+		assert.equal(blob.activity, "precisa configurar modelos");
 		// A real failure keeps the runner's honest wording.
 		const crashed = job({ status: "error", activity: "failed", error: "FAILED: headless crashed" });
 		const real = toBlobs({ jobs: [crashed], extractions: [] })[0]!;
@@ -191,7 +191,7 @@ describe("activity section render", () => {
 	it("renders the ALWAYS-PRESENT header when idle — empty means empty, nothing hides", () => {
 		const html = renderToStaticMarkup(<ActivitySection feed={{ jobs: [], extractions: [] }} />);
 		assert.match(html, /data-testid="activity-section"/);
-		assert.match(html, /Background agents/);
+		assert.match(html, /Agentes em segundo plano/);
 		assert.doesNotMatch(html, /activity-blob-(job|extraction)/, "no rows while idle");
 		assert.doesNotMatch(html, /activity-total-cost/, "the cost span is population, not decoration");
 	});
@@ -210,12 +210,12 @@ describe("activity section render", () => {
 		assert.match(html, /data-testid="activity-blob-extraction"/);
 		assert.match(html, /Chain-rule demo/);
 		assert.match(html, /building sandbox…/);
-		assert.match(html, /Extraction — merging/);
+		assert.match(html, /Extração — merging/);
 		// Unpriced job → "—", never $0.0000 (doctrine); both blobs show it.
 		assert.match(html, /activity-blob-cost[^>]*>—</);
 		assert.match(html, /data-testid="activity-abort"/, "END on the blob face, popover-independent");
 		assert.match(html, /\bEnd\b/, "the explicit END button");
-		assert.match(html, /Background agents/);
+		assert.match(html, /Agentes em segundo plano/);
 		// Total cost: nothing priced → "—" in the header.
 		assert.match(html, /activity-total-cost[^>]*>—</);
 		// Truncation-reveals KEEP native title (tooltip wave mechanism rule):

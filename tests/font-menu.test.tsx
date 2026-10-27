@@ -83,7 +83,7 @@ describe("FontMenuList (thin SSR)", () => {
 		assert.ok(!html.includes('data-testid="font-custom-input"'), "no separate custom input");
 		assert.ok(!html.includes('data-testid="font-custom-set"'), "no Set button");
 		assert.ok(!html.includes("Type a family name"), "no second field placeholder");
-		assert.ok(html.includes("Search fonts…"), "the search placeholder");
+		assert.ok(html.includes("Buscar fontes…"), "the search placeholder");
 	});
 
 	it("the effective family's row carries the quiet highlight; the default row does when unset", () => {
@@ -106,7 +106,7 @@ describe("FontMenuList (thin SSR)", () => {
 		const html = renderToStaticMarkup(
 			<FontMenuList families={undefined} effectiveFamily={null} onPick={() => {}} />,
 		);
-		assert.ok(html.includes("Loading fonts…"));
+		assert.ok(html.includes("Carregando fontes…"));
 	});
 });
 
@@ -148,7 +148,7 @@ describe("the emphasis-ink factory ruling (globals.css)", () => {
 		const html = renderToStaticMarkup(
 			<AppearanceSection appearance={undefined} onSectionChange={() => {}} />,
 		);
-		assert.equal((html.match(/Empty = same as text/g) ?? []).length, 2, "bold + italic rows");
+		assert.equal((html.match(/Vazio = igual ao texto/g) ?? []).length, 2, "bold + italic rows");
 		assert.ok(!html.includes("#ee928c"));
 		assert.ok(!html.includes("#6fa9d6"));
 	});

@@ -13,7 +13,7 @@ const AUTHORIZE = `${ISSUER}/api/accounts/authorize`;
 const TOKEN = `${ISSUER}/api/accounts/oauth/token`;
 const JWKS = `${ISSUER}/.well-known/jwks.json`;
 const SCOPES = ["openid", "profile", "email", "offline_access", "resource.invoke", "chatgpt.tokens.use.direct"];
-const REVOCATION_WARNING = "Account disconnected locally. Remote revocation could not be confirmed.";
+const REVOCATION_WARNING = "Conta desconectada localmente. Não foi possível confirmar a revogação remota.";
 const random = () => crypto.randomBytes(32).toString("base64url");
 const fail = (code) => Object.assign(new Error(code), { code });
 const publicError = (err) => ({

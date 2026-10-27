@@ -56,12 +56,12 @@ describe("turn settlement recovery", () => {
 		let cleanups = 0;
 		const handle = runPiTurn({
 			agent: agentEndingWith(new Error("synthetic loop failure")),
-			onError: () => "An error occurred.",
+			onError: () => "Ocorreu um erro.",
 			onFinish() { throw new Error("synthetic save failure"); },
 			onSettleFailure(error, reportedErrorText) {
 				cleanups++;
 				assert.match(String(error), /synthetic save failure/);
-				assert.equal(reportedErrorText, "An error occurred.");
+				assert.equal(reportedErrorText, "Ocorreu um erro.");
 			},
 		});
 		const frames = wireFrames(await new Response(handle.subscribe()).text());

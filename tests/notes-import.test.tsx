@@ -63,7 +63,7 @@ for (const [name, results] of [
 	["invalid error", [{ ...completed(), error: 42 }, completed(1)]],
 	["missing failure error", [{ ...completed(), ok: false, outcome: "failed" }, completed(1)]],
 ] as const) it(`malformed response (${name}) is rejected for retry`, () => {
-	assert.throws(() => parseNotesImportResults({ results }, files), /Please retry/);
+	assert.throws(() => parseNotesImportResults({ results }, files), /Tente o arquivo de novo/);
 });
 
 it("POST sends only captured files, and retains config/provider details", async () => {
@@ -155,7 +155,7 @@ for (const kind of ["network", "non-JSON", "non-2xx", "malformed", "duplicate in
 	};
 	await mount();
 	await submit();
-	const message = kind === "network" ? "synthetic offline" : kind === "non-2xx" ? "Import request failed (HTTP 503): synthetic refused. Please retry the file." : "Invalid import response. Please retry the file.";
+	const message = kind === "network" ? "synthetic offline" : kind === "non-2xx" ? "Falha na importação (HTTP 503): synthetic refused. Tente o arquivo de novo." : "Resposta de importação inválida. Tente o arquivo de novo.";
 	assert.deepEqual(current.errors, files.map((file) => `${file.name}: ${message}`));
 	assert.equal(host!.querySelectorAll('[role="alert"]').length, 2);
 	assert.equal(finishes, 1);

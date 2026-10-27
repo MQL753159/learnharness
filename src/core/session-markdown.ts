@@ -65,6 +65,8 @@ function markdownContext(messages: ReadonlyArray<LhMessage>): MarkdownContext {
 
 /** solvedWithHints → "Solved with hints" — the outcome enum reads as prose. */
 function outcomeLabel(outcome: string): string {
+	const pt: Record<string, string> = { solved: "Resolvido", solvedWithHints: "Resolvido com dicas", movedOn: "Seguiu adiante", surrendered: "Desistiu", dismissed: "Dispensado" };
+	if (pt[outcome]) return pt[outcome];
 	const spaced = outcome.replace(/([a-z])([A-Z])/g, (_, lo: string, hi: string) => `${lo} ${hi.toLowerCase()}`);
 	return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
@@ -92,28 +94,28 @@ function toolResultBody(result: ToolResultMessage, ctx?: MarkdownContext): { hea
 	) {
 		const heading =
 			result.toolName === "quiz"
-				? "Quiz"
+				? "Pergunta"
 				: result.toolName === "probe"
-					? "Probe"
+					? "Sondagem"
 					: result.toolName === "recall"
-						? "Recall"
-						: "Recall check"; // explain — the teach free-recall name
-		const question = typeof out?.questionText === "string" && out.questionText ? out.questionText : "(no question text)";
+						? "Recordação"
+						: "Pergunta de checagem"; // explain — the teach free-recall name
+		const question = typeof out?.questionText === "string" && out.questionText ? out.questionText : "(sem texto da pergunta)";
 		const body = [`**Q:** ${question}`];
-		if (out?.dismissed === true) body.push("The learner skipped this check.");
-		else if (out?.dontKnow === true) body.push("The learner did not know.");
-		else if (out?.correct === true) body.push("The learner answered correctly.");
-		else if (out?.correct === false) body.push("The learner answered incorrectly.");
-		else if (typeof out?.text === "string" && out.text.trim()) body.push(`The learner answered in his own words: ${out.text.trim()}`);
-		if (typeof out?.note === "string" && out.note) body.push(`*(his thinking: ${out.note})*`);
+		if (out?.dismissed === true) body.push("O aluno pulou esta checagem.");
+		else if (out?.dontKnow === true) body.push("O aluno não sabia.");
+		else if (out?.correct === true) body.push("O aluno acertou.");
+		else if (out?.correct === false) body.push("O aluno errou.");
+		else if (typeof out?.text === "string" && out.text.trim()) body.push(`O aluno respondeu com as próprias palavras: ${out.text.trim()}`);
+		if (typeof out?.note === "string" && out.note) body.push(`*(raciocínio do aluno: ${out.note})*`);
 		return { heading, body };
 	}
 
 	if (ctx !== undefined && result.toolName === PRACTICE_PROBLEM_TOOL) {
 		const statement = ctx.calls.get(result.toolCallId)?.args?.statement;
 		return {
-			heading: "Problem",
-			body: [typeof statement === "string" && statement.trim() ? statement.trim() : "(no statement)"],
+			heading: "Problema",
+			body: [typeof statement === "string" && statement.trim() ? statement.trim() : "(sem enunciado)"],
 		};
 	}
 
@@ -121,33 +123,33 @@ function toolResultBody(result: ToolResultMessage, ctx?: MarkdownContext): { hea
 		const args = ctx.calls.get(result.toolCallId)?.args;
 		const outcome = typeof args?.outcome === "string" && args.outcome.trim() ? args.outcome.trim() : "";
 		const verdict = typeof args?.verdict === "string" && args.verdict.trim() ? args.verdict.trim() : undefined;
-		if (outcome === "dismissed") return { heading: "Concluded", body: ["The learner skipped this problem."] };
+		if (outcome === "dismissed") return { heading: "Concluído", body: ["O aluno pulou este problema."] };
 		const label = outcome !== "" ? `**${outcomeLabel(outcome)}.**` : "**Concluded.**";
 		const body = [verdict !== undefined ? `${label} ${verdict}` : label];
 		// The reveal (owner round, 2026-10-05): the solution committed at
 		// pose time — the newest cleanly-posed problem before this conclude.
 		const input = problemInputForConclude(ctx.messages, result.toolCallId);
 		const solution = typeof input?.modelSolution === "string" && input.modelSolution.trim() ? input.modelSolution.trim() : undefined;
-		if (solution !== undefined) body.push(`> **Model solution**\n>\n> ${solution.replace(/\n/g, "\n> ")}`);
-		return { heading: "Concluded", body };
+		if (solution !== undefined) body.push(`> **Solução modelo**\n>\n> ${solution.replace(/\n/g, "\n> ")}`);
+		return { heading: "Concluído", body };
 	}
 
 	if (result.toolName === "ask_user_question") {
-		const question = typeof out?.questionText === "string" && out.questionText ? out.questionText : "(no question text)";
+		const question = typeof out?.questionText === "string" && out.questionText ? out.questionText : "(sem texto da pergunta)";
 		const body = [`**Q:** ${question}`];
 		const chosen = [
 			...(Array.isArray(out?.answers) ? out!.answers! : []),
 			...(typeof out?.other === "string" && out.other.trim() ? [out.other.trim()] : []),
 		];
-		if (typeof out?.text === "string" && out.text.trim()) body.push(`The learner answered: ${out.text.trim()}`);
-		else if (chosen.length > 0) body.push(`The learner chose: ${chosen.join(", ")}`);
-		else if (out?.dismissed === true) body.push("The learner skipped this question.");
-		if (typeof out?.note === "string" && out.note) body.push(`*(his thinking: ${out.note})*`);
-		return { heading: "Question", body };
+		if (typeof out?.text === "string" && out.text.trim()) body.push(`O aluno respondeu: ${out.text.trim()}`);
+		else if (chosen.length > 0) body.push(`O aluno escolheu: ${chosen.join(", ")}`);
+		else if (out?.dismissed === true) body.push("O aluno pulou esta pergunta.");
+		if (typeof out?.note === "string" && out.note) body.push(`*(raciocínio do aluno: ${out.note})*`);
+		return { heading: "Pergunta", body };
 	}
 
 	// Parity with the line builder: other clean tool results are one line.
-	return { heading: "Tool", body: [`*${result.toolName} result delivered*`] };
+	return { heading: "Ferramenta", body: [`*${result.toolName} resultado entregue*`] };
 }
 
 /**

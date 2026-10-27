@@ -23,18 +23,18 @@ import { IS_MAC } from "../src/core/keyboard.ts";
 describe("hintText — the parenthesized composition", () => {
 	it("a registry action appends the LIVE binding (override-aware source)", () => {
 		assert.equal(hintText("Dictate", "toggle-dictation"), IS_MAC ? "Dictate (⌘D)" : "Dictate (Ctrl+D)");
-		assert.equal(hintText("Settings", "open-settings"), IS_MAC ? "Settings (⌘,)" : "Settings (Ctrl+,)");
-		assert.equal(hintText("Search sessions", "sessions-search"), IS_MAC ? "Search sessions (⌘⇧F)" : "Search sessions (Ctrl+Shift+F)");
+		assert.equal(hintText("Configurações", "open-settings"), IS_MAC ? "Configurações (⌘,)" : "Configurações (Ctrl+,)");
+		assert.equal(hintText("Buscar sessões", "sessions-search"), IS_MAC ? "Buscar sessões (⌘⇧F)" : "Buscar sessões (Ctrl+Shift+F)");
 	});
 
 	it("surface-owned keys ride the binding prop (no registry entry)", () => {
-		assert.equal(hintText("Close", undefined, "escape"), "Close (Esc)");
+		assert.equal(hintText("Fechar", undefined, "escape"), "Fechar (Esc)");
 		assert.equal(hintText("Send", undefined, "enter"), "Send (↵)");
 	});
 
 	it("no shortcut = the label alone, no dangling dash", () => {
 		assert.equal(hintText("Home"), "Home");
-		assert.equal(hintText("Stop dictation (Esc)"), "Stop dictation (Esc)");
+		assert.equal(hintText("Parar ditado (Esc)"), "Parar ditado (Esc)");
 	});
 });
 
@@ -46,7 +46,7 @@ describe("subtlety round pins (owner 2026-09-25)", () => {
 
 describe("spot-pins: the dev-speak cull (owner copy review at merge)", () => {
 	it("the auto-update hint is honest user language — no stream jargon", () => {
-		assert.equal(AUTO_UPDATE_HINT, "Check at startup and every 24 hours. Turning this off does not stop updates already in progress or ready to install.");
+		assert.equal(AUTO_UPDATE_HINT, "Verifica ao iniciar e a cada 24 horas. Desativar isto não interrompe atualizações já em andamento ou prontas para instalar.");
 		assert.ok(!AUTO_UPDATE_HINT.includes("wave"), "no stream vocabulary");
 	});
 });

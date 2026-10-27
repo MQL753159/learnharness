@@ -231,9 +231,9 @@ export function toBlobs(feed: ActivityFeed): ActivityBlob[] {
 			// 66dbea9): a pinned model whose key is gone reads as the key
 			// being needed, same quiet tone.
 			activity: isModelsRefusal(job.error)
-				? "needs model setup"
+				? "precisa configurar modelos"
 				: isProviderKeyRefusal(job.error)
-					? "needs a provider key"
+					? "precisa de uma chave de provedor"
 					: (job.activity ?? ""),
 			model: usage?.model,
 			steps: usage?.steps,
@@ -347,9 +347,9 @@ export function ActivitySection({ feed: feedProp }: { feed?: ActivityFeed }) {
 		<section data-testid="activity-section" className="border-t border-border px-3 pb-3 pt-2">
 			<div className="mb-1 flex items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground/70">
 				<ActivityIcon className="size-3" />
-				Background agents
+				Agentes em segundo plano
 				{blobs.length > 0 && (
-					<span className="ml-auto tabular-nums" data-testid="activity-total-cost" title="Total running cost (inferred)">
+					<span className="ml-auto tabular-nums" data-testid="activity-total-cost" title="Custo total em andamento (estimado)">
 						{planCostLabel(totalCost, subscriptionLabels(blobs.map((blob) => blob.model)))}
 				</span>
 				)}
@@ -392,15 +392,15 @@ function ActivityBlobRow({
 	const Icon = blob.process === "extraction" ? WaypointsIcon : (blob.jobKind && KIND_ICON[blob.jobKind]) || BotIcon;
 	const label =
 		blob.process === "extraction"
-			? `Extraction — ${blob.phase ?? "running"}`
+			? `Extração — ${blob.phase ?? "em andamento"}`
 			: blob.jobKind === "research"
-				? "Researcher"
+				? "Pesquisador"
 				: blob.jobKind === "demo"
-					? "Demo builder"
+					? "Criador de demonstrações"
 					: blob.jobKind === "visual"
-						? "Figure maker"
+						? "Criador de figuras"
 						: blob.jobKind === "pdf"
-							? "PDF reader"
+							? "Leitor de PDF"
 							: "Sub-agent";
 	return (
 		<div
@@ -437,7 +437,7 @@ function ActivityBlobRow({
 				data-testid="activity-abort"
 				onClick={onAbort}
 				disabled={abortState !== undefined}
-				title={abortState === "failed" ? "Abort failed — try again" : "End this background process"}
+				title={abortState === "failed" ? "Falha ao interromper — tente de novo" : "Encerrar este processo em segundo plano"}
 				aria-label={`End ${label} in ${blob.title}`}
 				className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground/70 transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
 			>
@@ -462,13 +462,13 @@ function ActivityBlobRow({
 						</div>
 						{blob.activity && <div className="break-words">{blob.activity}</div>}
 						<div className="flex justify-between gap-2">
-							<span>Cost</span>
+							<span>Custo</span>
 							<span className="tabular-nums text-card-foreground">
 								{planCostLabel(blob.cost, subscriptionLabel(blob.model))}
 							</span>
 						</div>
 						<div className="flex justify-between gap-2">
-							<span>Context</span>
+							<span>Contexto</span>
 							<span className="tabular-nums text-card-foreground" data-testid="activity-blob-context">
 								{blob.context === null
 									? "—"
@@ -477,22 +477,22 @@ function ActivityBlobRow({
 						</div>
 						{blob.model && (
 							<div className="flex justify-between gap-2">
-								<span>Model</span>
+								<span>Modelo</span>
 								<span className="truncate text-card-foreground">{blob.model}</span>
 							</div>
 						)}
 						{blob.steps !== undefined && (
 							<div className="flex justify-between gap-2">
-								<span>Steps</span>
+								<span>Etapas</span>
 								<span className="tabular-nums text-card-foreground">{blob.steps}</span>
 							</div>
 						)}
 						<a href={`/chat/${blob.chatId}`} className="text-primary hover:underline">
-							Open session →
+							Abrir sessão →
 						</a>
 					</div>
 					<div className="mt-2 text-muted-foreground/80">
-					{abortState === "failed" && "Abort failed — try again"}
+					{abortState === "failed" && "Falha ao interromper — tente de novo"}
 					{abortState === "pending" && "Stopping…"}
 				</div>
 				</div>

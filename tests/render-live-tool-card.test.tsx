@@ -20,11 +20,11 @@ describe("LiveToolCard (the working-state grammar)", () => {
 		assert.match(html, /data-testid="live-tool-card"/);
 		assert.match(html, /data-testid="braille-spinner"/);
 		// the label names the ACTUAL tool (the old bottom line's text)
-		assert.match(html, /Reading a file…/);
+		assert.match(html, /Lendo um arquivo…/);
 		// the headline argument rides the header
 		assert.match(html, /notes\.md/);
 		// the streaming input is shown in the expandable body
-		assert.match(html, /Input \(streaming\)/);
+		assert.match(html, /Entrada \(em transmissão\)/);
 		assert.match(html, /notes\.md/);
 	});
 
@@ -32,7 +32,7 @@ describe("LiveToolCard (the working-state grammar)", () => {
 		assert.match(renderToStaticMarkup(<LiveToolCard part={part("mystery_tool", {}) as never} />), /Working…/);
 		assert.match(
 			renderToStaticMarkup(<LiveToolCard part={part("research", { query: "x" }) as never} />),
-			/Dispatching research…/,
+			/Enviando pesquisa…/,
 		);
 	});
 

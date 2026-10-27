@@ -56,7 +56,7 @@ describe("backdrop dismissal requires a whole primary gesture on the scrim", () 
 			createElement("div", {
 				"data-testid": "body",
 				onClick: (event: MouseEvent) => event.stopPropagation(),
-			}, createElement("button", { onClick: () => { actions++; }, "data-testid": "action" }, "Save"),
+			}, createElement("button", { onClick: () => { actions++; }, "data-testid": "action" }, "Salvar"),
 			createPortal(createElement("button", {
 				"data-testid": "portal-option",
 				onClick: () => { actions++; },

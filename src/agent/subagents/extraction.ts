@@ -31,6 +31,7 @@ import { batchRuns, coverageOf, messageViewLines } from "../../core/coverage.ts"
 import { failedOutputCallIds, type LhMessage } from "../../core/native-messages.ts";
 import { auditorGraphTools } from "../tools/graph.ts";
 import { runSubmitAgent, healStringifiedArrays } from "./submit-agent.ts";
+import { LANGUAGE_RULE } from "../language.ts";
 
 /**
  * The extraction pipeline (vision §1 construction, 2026-09-02 redesign;
@@ -490,7 +491,7 @@ function runExtractor(
 		parameters: sessionFindingsSchema,
 		fill: fillFindings,
 		validate: (value) => validateSessionAnchors(value, batchIds) ?? validateFindingsChains(value, existingIds),
-		systemPrompt: EXTRACTOR_INSTRUCTIONS,
+		systemPrompt: `${EXTRACTOR_INSTRUCTIONS}\n\n${LANGUAGE_RULE}`,
 		prompt,
 		engine,
 		signal,
@@ -521,7 +522,7 @@ function runNotesExtractor(
 		parameters: findingsSchema,
 		fill: fillNotesFindings,
 		validate: (value) => validateFindingsChains(value, existingIds),
-		systemPrompt: NOTES_EXTRACTOR_INSTRUCTIONS,
+		systemPrompt: `${NOTES_EXTRACTOR_INSTRUCTIONS}\n\n${LANGUAGE_RULE}`,
 		prompt,
 		engine,
 		signal,

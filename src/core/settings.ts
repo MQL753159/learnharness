@@ -109,7 +109,7 @@ export interface ModelsNotConfigured {
 }
 export function modelsNotConfigured(missing: ModelSlotName[]): ModelsNotConfigured {
 	return {
-		error: "No model configured — set up your models first",
+		error: "Nenhum modelo configurado — configure seus modelos primeiro",
 		code: MODELS_NOT_CONFIGURED_CODE,
 		missing,
 	};
@@ -154,11 +154,11 @@ export interface ProviderKeyMissing {
 }
 /** The refusal wording's invariant tail — the matcher below keys on it
  * (the label prefix varies by provider). */
-const PROVIDER_KEY_MISSING_TAIL = "key is set — add one in Settings → Keys";
+const PROVIDER_KEY_MISSING_TAIL = "— adicione uma em Configurações → Provedores";
 export function providerKeyMissing(provider: string, slots: ModelSlotName[]): ProviderKeyMissing {
 	const label = AUTH_PROVIDER_KEYS.find((p) => p.id === provider)?.label ?? provider;
 	return {
-		error: `No ${label} ${PROVIDER_KEY_MISSING_TAIL}`,
+		error: `Nenhuma chave de ${label} cadastrada ${PROVIDER_KEY_MISSING_TAIL}`,
 		code: PROVIDER_KEY_MISSING_CODE,
 		provider,
 		slots,

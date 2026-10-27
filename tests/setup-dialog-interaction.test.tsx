@@ -159,7 +159,7 @@ describe("setup polish interactions", () => {
 
 	it("model and thinking dropdowns keep outside-click dismissal and model guidance uses two sentences", async () => {
 		await mount({ keyed: true });
-		assert.equal(element('[data-testid="setup-stage-pickers"] > p').textContent, "Pick the model for each tier. All three are required before chats can start.");
+		assert.equal(element('[data-testid="setup-stage-pickers"] > p').textContent, "Escolha o modelo de cada nível. Os três são obrigatórios para começar as conversas.");
 		await click(element('[data-testid="setup-trigger-strong"]'));
 		await click(element('[data-testid="setup-dialog"] h2'));
 		assert.equal(document.querySelector('[data-testid="setup-menu-strong"]'), null);
@@ -175,11 +175,11 @@ describe("setup polish interactions", () => {
 	it("the empty vision list gives the approved next action without an em dash", async () => {
 		await mount({ keyed: true });
 		await click(element('[data-testid="setup-trigger-vision"]'));
-		assert.ok(element('[data-testid="setup-menu-vision"]').textContent?.includes("No image-capable models. Add a provider key with access to a vision model."));
+		assert.ok(element('[data-testid="setup-menu-vision"]').textContent?.includes("Nenhum modelo com suporte a imagens. Adicione uma chave de provedor com acesso a um modelo de visão."));
 	});
 
 	it("catalog failure uses the approved two-sentence error", async () => {
 		await mount({ catalogFails: true });
-		assert.ok(element('[data-testid="setup-dialog"]').textContent?.includes("Model catalog could not be loaded. Check the connection and retry."));
+		assert.ok(element('[data-testid="setup-dialog"]').textContent?.includes("Não foi possível carregar o catálogo de modelos. Verifique a conexão e tente de novo."));
 	});
 });

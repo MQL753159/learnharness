@@ -8,6 +8,7 @@ import { providerEventObserver, type ProviderEventObserver } from "../provider-e
 import type { PdfResult, PdfToolInput } from "../../core/contracts.ts";
 import { getHeadless, type HeadlessApi } from "./headless.ts";
 import { pdfExtract, pdfInfo, pdfProbe, pdfSearch, type PdfSearchHit } from "./pdf-ops.ts";
+import { LANGUAGE_RULE } from "../language.ts";
 
 /**
  * The pdf-reader sub-agent (sources v0, 2026-09): reads a learner-provided
@@ -207,7 +208,7 @@ export async function runPdfReaderAgent(
 		for (let iteration = 0; iteration < maxIterations; iteration++) {
 			const result = await streamOnce(
 				engine,
-				INSTRUCTIONS,
+				`${INSTRUCTIONS}\n\n${LANGUAGE_RULE}`,
 				messages,
 				toolDeclarations,
 				sessionId,

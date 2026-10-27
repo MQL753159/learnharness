@@ -85,10 +85,10 @@ describe("messageMarkdown", () => {
 			result("r1", "q1", "quiz", { questionText: "What is a derivative?", correct: false, dontKnow: false, note: "mixed up signs" }),
 			"r1",
 		)!;
-		assert.match(md, /^### Quiz · r1$/m);
+		assert.match(md, /^### Pergunta · r1$/m);
 		assert.match(md, /\*\*Q:\*\* What is a derivative\?/);
-		assert.match(md, /The learner answered incorrectly\./);
-		assert.match(md, /\*\(his thinking: mixed up signs\)\*/);
+		assert.match(md, /O aluno errou\./);
+		assert.match(md, /\*\(raciocínio do aluno: mixed up signs\)\*/);
 	});
 
 	it("explain results: the learner's own words are shown", () => {
@@ -96,8 +96,8 @@ describe("messageMarkdown", () => {
 			result("r1", "e1", "explain", { questionText: "Why does Mercury stay near the Sun?", text: "it never strays far" }),
 			"r1",
 		)!;
-		assert.match(md, /^### Recall check · r1$/m);
-		assert.match(md, /The learner answered in his own words: it never strays far/);
+		assert.match(md, /^### Pergunta de checagem · r1$/m);
+		assert.match(md, /O aluno respondeu com as próprias palavras: it never strays far/);
 	});
 
 	it("probe-phase questions export under their own names (owner, 2026-10-09)", () => {
@@ -105,12 +105,12 @@ describe("messageMarkdown", () => {
 			result("r1", "p1", "probe", { questionText: "What is a derivative?", correct: true, dontKnow: false }),
 			"r1",
 		)!;
-		assert.match(probe, /^### Probe · r1$/m);
+		assert.match(probe, /^### Sondagem · r1$/m);
 		const recall = messageMarkdown(
 			result("r2", "rr1", "recall", { questionText: "Why does Mercury stay near the Sun?", text: "it never strays far" }),
 			"r2",
 		)!;
-		assert.match(recall, /^### Recall · r2$/m);
+		assert.match(recall, /^### Recordação · r2$/m);
 	});
 
 	it("ask blocks: question + chosen options + free text", () => {
@@ -118,17 +118,17 @@ describe("messageMarkdown", () => {
 			result("r1", "a1", "ask_user_question", { questionText: "Which way?", answers: ["second"], other: "also the third" }),
 			"r1",
 		)!;
-		assert.match(chosen, /^### Question · r1$/m);
-		assert.match(chosen, /The learner chose: second, also the third/);
+		assert.match(chosen, /^### Pergunta · r1$/m);
+		assert.match(chosen, /O aluno escolheu: second, also the third/);
 		const free = messageMarkdown(
 			result("r2", "a2", "ask_user_question", { questionText: "Why?", text: "because" }),
 			"r2",
 		)!;
-		assert.match(free, /The learner answered: because/);
+		assert.match(free, /O aluno respondeu: because/);
 	});
 
 	it("other clean tool results: one line; failed calls and markers: nothing", () => {
-		assert.equal(messageMarkdown(result("r1", "j1", "research", { brief: "long" }), "r1"), "### Tool · r1\n\n*research result delivered*");
+		assert.equal(messageMarkdown(result("r1", "j1", "research", { brief: "long" }), "r1"), "### Ferramenta · r1\n\n*research resultado entregue*");
 		assert.equal(messageMarkdown(result("r2", "j2", "research", {}, true), "r2"), null, "a failed call is retry context");
 		assert.equal(messageMarkdown(user("u3", "   "), "u3"), null, "empty text renders nothing");
 	});
@@ -162,9 +162,9 @@ describe("sessionMarkdown — the practice join (owner-approved, 2026-10-06)", (
 			result("r2", "call-c1", "conclude", null),
 		];
 		const md = sessionMarkdown(messages);
-		assert.ok(md.includes("### Concluded"), "the Concluded heading renders");
-		assert.ok(md.includes("**Solved with hints.** Right answer, one nudge."), "outcome reads as prose, then the verdict");
-		assert.ok(md.includes("> **Model solution**"), "the reveal block quotes the committed solution");
+		assert.ok(md.includes("### Concluído"), "the Concluded heading renders");
+		assert.ok(md.includes("**Resolvido com dicas.** Right answer, one nudge."), "outcome reads as prose, then the verdict");
+		assert.ok(md.includes("> **Solução modelo**"), "the reveal block quotes the committed solution");
 		assert.ok(md.includes("> Bayes, twice over."), "the solution text carries the blockquote prefix");
 	});
 
@@ -176,7 +176,7 @@ describe("sessionMarkdown — the practice join (owner-approved, 2026-10-06)", (
 			result("r2", "call-c1", "conclude", null),
 		];
 		const md = sessionMarkdown(messages);
-		assert.ok(md.includes("The learner skipped this problem."), "the dismissal reads as a skip");
+		assert.ok(md.includes("O aluno pulou este problema."), "the dismissal reads as a skip");
 		assert.ok(!md.includes("The answer."), "no reveal on a skipped problem — the card's refusal law");
 		assert.ok(md.includes("### Problem"), "the statement still renders (it was on screen)");
 	});

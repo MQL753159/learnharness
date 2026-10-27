@@ -210,7 +210,7 @@ export function ModelControl({ chatId, onModelChange }: { chatId?: string; onMod
 				setOpen(null);
 				notifySettingsSaved("models");
 			} catch {
-				setError("Could not reach the server — try again.");
+				setError("Não foi possível contatar o servidor — tente de novo.");
 			}
 		},
 		[],
@@ -239,7 +239,7 @@ export function ModelControl({ chatId, onModelChange }: { chatId?: string; onMod
 				setSession(stored?.settings ?? next);
 				setOpen(null);
 			} catch {
-				setError("Could not reach the server — try again.");
+				setError("Não foi possível contatar o servidor — tente de novo.");
 			}
 		},
 		[chatId],
@@ -318,7 +318,7 @@ export function ModelControl({ chatId, onModelChange }: { chatId?: string; onMod
 				// Trimmed (owner, subtlety round 2026-09-25): "Model selector"
 				// — the long sentence was way too much. ⌘K opens this same
 				// menu (registry, override-aware).
-				label="Model selector"
+				label="Seletor de modelo"
 				action="open-model-picker"
 				side="bottom"
 			>
@@ -341,7 +341,7 @@ export function ModelControl({ chatId, onModelChange }: { chatId?: string; onMod
 				// "Thinking" + its real shortcut via the registry (owner interlude
 				// 2026-09-25): ⇧⇥ cycles the level, so "Thinking (⇧⇥)" —
 				// rebind-live like every Hint suffix.
-				label="Thinking"
+				label="Raciocínio"
 				action="cycle-thinking"
 				side="bottom"
 			>
@@ -388,10 +388,10 @@ export function ModelControl({ chatId, onModelChange }: { chatId?: string; onMod
 						onPick={pickModel}
 						footer={
 							catalog && catalog.models.length === 0
-								? "No models — add a provider key in Keys"
+								? "Nenhum modelo — adicione uma chave de provedor em Provedores"
 								: chatId
-									? "This session's model"
-									: "Strong tier — the default for new sessions"
+									? "Modelo desta sessão"
+									: "Nível forte — o padrão para novas sessões"
 						}
 					/>
 				</MenuShell>
@@ -408,8 +408,8 @@ export function ModelControl({ chatId, onModelChange }: { chatId?: string; onMod
 						levels={catalog ? levels : []}
 						effectiveLevel={effectiveLevel}
 						onPick={(level) => apply(effectiveProvider ?? "", effectiveId ?? "", level as ThinkingLevel)}
-						empty={catalog ? (effectiveId ? `${prettyModel(effectiveId)} has no thinking levels.` : "Pick a model first.") : "Loading…"}
-						footer="Levels this model actually supports"
+						empty={catalog ? (effectiveId ? `${prettyModel(effectiveId)} não tem níveis de raciocínio.` : "Escolha um modelo primeiro.") : "Carregando…"}
+						footer="Níveis que este modelo realmente suporta"
 					/>
 					{error && <div className="mt-1 text-destructive">{error}</div>}
 				</MenuShell>

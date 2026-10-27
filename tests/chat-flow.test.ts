@@ -932,7 +932,7 @@ describe("canonical persistence failures", () => {
 				});
 				return agent;
 			});
-			assert.equal(eventsOf(body).find(e => e.type === "error")?.errorText, "An error occurred.");
+			assert.equal(eventsOf(body).find(e => e.type === "error")?.errorText, "Ocorreu um erro.");
 			assert.ok(chatStore.getChat(chat.id)!.messages.some(m => m.id === steer.id), "the steer was saved before bookkeeping failed");
 			const delivered: LhMessage[] = [];
 			const next = { steer: (message: LhMessage) => delivered.push(message), state: { model: { provider: "faux" } } } as unknown as Parameters<typeof registerLiveAgent>[1];
@@ -1044,7 +1044,7 @@ describe("the BYOK turn gate (no factory floor — owner, 2026-09-22)", () => {
 			const body = (await res.json()) as { error: string; code: string; missing: string[] };
 			assert.equal(body.code, "models_not_configured");
 			assert.deepEqual(body.missing, ["strong"]);
-			assert.match(body.error, /No model configured/);
+			assert.match(body.error, /Nenhum modelo configurado/);
 		} else {
 			assert.equal(res.status, 200, "the record's strong slot satisfies the conversation chain");
 			await drainRunning(chat.id);
@@ -1090,7 +1090,7 @@ describe("the key-presence turn gate (provider-key interlude, 2026-09-25)", () =
 			assert.equal(body.code, "provider_key_missing");
 			assert.equal(body.provider, "together", "the envelope names whose key is gone");
 			assert.deepEqual(body.slots, ["strong"], "the conversation tier is the affected slot");
-			assert.equal(body.error, "No Together key is set — add one in Settings → Keys", "the human line names the provider");
+			assert.equal(body.error, "Nenhuma chave de Together cadastrada — adicione uma em Configurações → Provedores", "the human line names the provider");
 			assert.equal(isTurnRunning(chat.id), false, "the refusal never registers a live turn");
 			assert.equal(chatStore.getChat(chat.id)!.messages.length, 0, "no write-ahead persist before the gate");
 		} finally {

@@ -25,7 +25,7 @@ function recordingEngine() {
 	} };
 	return { engine, requests };
 }
-const again = { name: "again", label: "again", description: "Continue", parameters: Type.Object({}), execute: async () => ({ content: [{ type: "text" as const, text: "ok" }], details: {} }) };
+const again = { name: "again", label: "again", description: "Continuar", parameters: Type.Object({}), execute: async () => ({ content: [{ type: "text" as const, text: "ok" }], details: {} }) };
 
 // Whole-process replacement isolates native auth/profile discovery; fetch never
 // delegates. No real credentials, .env, OAuth accounts, or model inference.

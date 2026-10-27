@@ -5,6 +5,7 @@ import { createPdfReadTools } from "../tools/pdf-read.ts";
 import type { SearchProvider } from "../../core/search.ts";
 import type { PiEngine } from "../models.ts";
 import { runSubagent } from "./pi-run.ts";
+import { LANGUAGE_RULE } from "../language.ts";
 
 /**
  * The researcher sub-agent (vision §2.5): a SEPARATE ToolLoopAgent instance
@@ -98,7 +99,7 @@ export async function runResearcherAgent(prompt: string, opts: ResearcherRunOpti
 		role: "researcher",
 		prompt,
 		engine: opts.engine,
-		systemPrompt: INSTRUCTIONS,
+		systemPrompt: `${INSTRUCTIONS}\n\n${LANGUAGE_RULE}`,
 		maxTurns: 12,
 		abortSignal: opts.abortSignal,
 		onUsage: opts.onUsage,

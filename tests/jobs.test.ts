@@ -1795,11 +1795,11 @@ describe("BYOK job refusal (no factory floor)", () => {
 		// stranded waiting for a result that will never come — and
 		// finalizeJob flips the record to error after the delivery.
 		assert.equal(done.status, "error", "the job lands error, never a phantom run");
-		assert.match(done.error ?? "", /No model configured/);
+		assert.match(done.error ?? "", /Nenhum modelo configurado/);
 		assert.match(done.error ?? "", /missing: cheap/);
 		assert.equal(delivery.steers.length, 1, "the refusal STEERED — the teacher is not stranded");
 		assert.ok(
-			delivery.steers[0]!.content.includes("Research failed: No model configured"),
+			delivery.steers[0]!.content.includes("Research failed: Nenhum modelo configurado"),
 			"the steer carries the kind's failure shape",
 		);
 		const result = done.result as ResearchResult;
@@ -1844,7 +1844,7 @@ describe("provider-key job refusal (key-presence interlude)", () => {
 		assert.deepEqual(seen, [[engine.model.provider, "cheap"]], "the check saw the engine's provider + the researcher's tier");
 		assert.equal(delivery.steers.length, 1, "the refusal STEERED — the teacher is not stranded");
 		assert.ok(
-			delivery.steers[0]!.content.includes(`Research failed: No ${engine.model.provider} key is set`),
+			delivery.steers[0]!.content.includes(`Research failed: Nenhuma chave de ${engine.model.provider} cadastrada`),
 			"the steer carries the kind's failure shape",
 		);
 		const result = done.result as ResearchResult;

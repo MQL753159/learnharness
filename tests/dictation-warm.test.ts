@@ -37,13 +37,13 @@ describe("warm-token cache (mitigation D, owner 2026-09-27)", () => {
 		const m = createWarmMinter(
 			async () => {
 				mints++;
-				if (keyless) throw new Error("Dictation needs a Deepgram key");
+				if (keyless) throw new Error("O ditado precisa de uma chave da Deepgram");
 				return "t2";
 			},
 			() => 1000,
 			60_000,
 		);
-		await assert.rejects(m.mint(), /Deepgram key/);
+		await assert.rejects(m.mint(), /chave da Deepgram/);
 		keyless = false; // the key arrives
 		assert.equal(await m.mint(), "t2");
 		assert.equal(mints, 2);
@@ -91,7 +91,7 @@ describe("warm-token cache (mitigation D, owner 2026-09-27)", () => {
 		const m = createWarmMinter(
 			async () => {
 				mints++;
-				throw new Error("Dictation needs a Deepgram key");
+				throw new Error("O ditado precisa de uma chave da Deepgram");
 			},
 			() => 1000,
 			60_000,

@@ -80,7 +80,7 @@ import type {CallUsage} from "../core/contracts.ts";
  */
 
 function settlementErrorText(error: unknown): string {
-	return error instanceof TurnPersistenceError ? error.message : "An error occurred.";
+	return error instanceof TurnPersistenceError ? error.message : "Ocorreu um erro.";
 }
 
 const jobRunner = createJobRunner({
@@ -511,7 +511,7 @@ export async function handleChatInput(
 				if (conversation.provider === "chatgpt") return chatGPTStreamError(String(error));
 				if (isSubscriptionProvider(conversation.provider)) return nativeSubscriptionError(conversation.provider, String(error));
 				console.error(`[chat ${chatId}] turn error:`, error);
-				return "An error occurred.";
+				return "Ocorreu um erro.";
 			},
 			onSettleError: settlementErrorText,
 			onSettleFailure: (error, reportedErrorText) => {

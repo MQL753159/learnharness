@@ -67,7 +67,7 @@ describe("DraftShell — the sessionless surface", () => {
 		// No CTA by default: a configured surface stays quiet.
 		assert.ok(!html.includes('data-testid="setup-cta"'));
 		// The same empty state a fresh chat shows.
-		assert.ok(html.includes("The teacher will open by probing what you already know."));
+		assert.ok(html.includes("O professor vai começar sondando o que você já sabe."));
 		// The pointer-events pattern (953b22b): the wrapper stays inert…
 		assert.ok(html.includes("pointer-events-none"));
 		// …and the blob re-enables it.
@@ -83,14 +83,14 @@ describe("DraftShell — the sessionless surface", () => {
 				onSend={() => {}}
 				setupCta={
 					<button type="button" data-testid="setup-cta">
-						Set up your models
+						Configure seus modelos
 					</button>
 				}
 			/>,
 		);
 		// The same affordance home carries, above the draft shell's blob.
 		assert.ok(html.includes('data-testid="setup-cta"'));
-		assert.match(html, />Set up your models<\/button>/);
+		assert.match(html, />Configure seus modelos<\/button>/);
 		assert.doesNotMatch(html, /chats start after/);
 		// Above the composer: the CTA's markup precedes the blob's.
 		const cta = html.indexOf('data-testid="setup-cta"');
@@ -121,9 +121,9 @@ describe("the practice draft (?mode=practice, 2026-10-04)", () => {
 				mode="practice"
 			/>,
 		);
-		assert.match(html, /New practice session/);
-		assert.ok(html.includes("Pick nodes from your knowledge graph, describe what you want to practice, or bring your own problem."));
-		assert.match(html, /What do you want to practice\?/);
+		assert.match(html, /Nova sessão de prática/);
+		assert.ok(html.includes("Escolha nós do seu grafo de conhecimento, descreva o que quer praticar ou traga seu próprio problema."));
+		assert.match(html, /O que você quer praticar\?/);
 	});
 
 	it("THE PICK BAR (owner round 10): the practice draft carries the same pill above its composer", () => {
@@ -136,7 +136,7 @@ describe("the practice draft (?mode=practice, 2026-10-04)", () => {
 				mode="practice"
 			/>,
 		);
-		assert.match(html, />Pick nodes<\/button>/);
+		assert.match(html, />Escolher nós<\/button>/);
 		// picked: count + Clear, the home register verbatim
 		const picked = renderToStaticMarkup(
 			<DraftShell
@@ -148,8 +148,8 @@ describe("the practice draft (?mode=practice, 2026-10-04)", () => {
 				picks={[{ id: "n_1", name: "Parity", statement: "Odd + odd = even." }]}
 			/>,
 		);
-		assert.match(picked, /1 node selected/);
-		assert.match(picked, /Clear/);
+		assert.match(picked, /1 nó selecionado/);
+		assert.match(picked, /Limpar/);
 		// teach mode with nothing picked renders nothing (home's law)
 		const teach = renderToStaticMarkup(
 			<DraftShell busy={false} text="" onChange={() => {}} onSend={() => {}} mode="teach" />,

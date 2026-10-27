@@ -80,13 +80,13 @@ describe("version and contextual copy", () => {
 		assert.equal(updateStatusText(null), null);
 		assert.equal(updateStatusText(state()), null);
 		assert.equal(updateStatusText(state({ status: "disabled" })), null);
-		assert.equal(updateStatusText(state({ status: "checking" })), "Checking for updates…");
-		assert.equal(updateStatusText(state({ status: "downloading", version: "0.3.8" })), "Downloading version 0.3.8…");
-		assert.equal(updateStatusText(state({ status: "up-to-date" })), "No newer version was found at the last check.");
-		assert.equal(updateStatusText(state({ status: "downloaded", version: "0.3.8" })), "Version 0.3.8 is ready. It will install when you quit the app.");
-		assert.equal(updateStatusText(state({ status: "error" })), "Couldn’t check for updates. Try again later.");
-		assert.equal(updateStatusText(state({ status: "downloading" })), "Downloading an update…");
-		assert.equal(updateStatusText(state({ status: "downloaded" })), "An update is ready. It will install when you quit the app.");
+		assert.equal(updateStatusText(state({ status: "checking" })), "Verificando atualizações…");
+		assert.equal(updateStatusText(state({ status: "downloading", version: "0.3.8" })), "Baixando a versão 0.3.8…");
+		assert.equal(updateStatusText(state({ status: "up-to-date" })), "Nenhuma versão mais nova foi encontrada na última verificação.");
+		assert.equal(updateStatusText(state({ status: "downloaded", version: "0.3.8" })), "A versão 0.3.8 está pronta. Ela será instalada quando você fechar o app.");
+		assert.equal(updateStatusText(state({ status: "error" })), "Não foi possível verificar atualizações. Tente mais tarde.");
+		assert.equal(updateStatusText(state({ status: "downloading" })), "Baixando uma atualização…");
+		assert.equal(updateStatusText(state({ status: "downloaded" })), "Uma atualização está pronta. Ela será instalada quando você fechar o app.");
 	});
 });
 
@@ -127,29 +127,29 @@ describe("General update rows", () => {
 		await b.push(state({ status: "checking", revision: 1 }));
 		assert.equal((q(host, "update-check") as HTMLButtonElement).disabled, true);
 		assert.equal(q(host, "update-check")!.getAttribute("aria-busy"), "true");
-		assert.equal(q(host, "update-status")!.textContent, "Checking for updates…");
+		assert.equal(q(host, "update-status")!.textContent, "Verificando atualizações…");
 		await b.push(state({ status: "downloading", version: "0.3.8", revision: 2 }));
-		assert.equal(q(host, "update-status")!.textContent, "Downloading version 0.3.8…");
+		assert.equal(q(host, "update-status")!.textContent, "Baixando a versão 0.3.8…");
 		assert.equal((q(host, "update-check") as HTMLButtonElement).disabled, true);
 		await b.push(state({ status: "downloaded", version: "0.3.8", revision: 3 }));
-		assert.equal(q(host, "update-check"), null); assert.ok(q(host, "update-status")!.textContent!.includes("quit the app"));
+		assert.equal(q(host, "update-check"), null); assert.ok(q(host, "update-status")!.textContent!.includes("fechar o app"));
 		await click(q(host, "update-restart")); assert.equal(b.calls.install, 1);
 	});
 
 	it("up-to-date and failure statuses allow another manual check", async () => {
 		const b = bridge(); const host = await mount(<UpdateSettings {...props} />);
 		await b.push(state({ status: "up-to-date", revision: 1 }));
-		assert.equal(q(host, "update-status")!.textContent, "No newer version was found at the last check.");
+		assert.equal(q(host, "update-status")!.textContent, "Nenhuma versão mais nova foi encontrada na última verificação.");
 		await b.push(state({ status: "error", revision: 2 }));
 		assert.equal((q(host, "update-check") as HTMLButtonElement).disabled, false);
-		assert.equal(q(host, "update-status")!.textContent, "Couldn’t check for updates. Try again later.");
+		assert.equal(q(host, "update-status")!.textContent, "Não foi possível verificar atualizações. Tente mais tarde.");
 		await click(q(host, "update-check")); assert.equal(b.calls.check, 1);
 	});
 
 	it("bridge command rejection is handled without exposing raw diagnostics", async () => {
 		const b = bridge(); b.failCheck(); const host = await mount(<UpdateSettings {...props} />);
 		await click(q(host, "update-check"));
-		assert.equal(q(host, "update-status")!.textContent, "Couldn’t check for updates. Try again later.");
+		assert.equal(q(host, "update-status")!.textContent, "Não foi possível verificar atualizações. Tente mais tarde.");
 		assert.ok(!host.textContent!.includes("sensitive"));
 	});
 
@@ -184,7 +184,7 @@ describe("General update rows", () => {
 		const snapshot = deferred<UpdateState>(); bridge(state(), snapshot.promise);
 		const host = await mount(<UpdateSettings {...props} />);
 		await act(async () => { snapshot.reject(new Error("sensitive error")); });
-		assert.equal(q(host, "update-status")!.textContent, "Couldn’t check for updates. Try again later.");
+		assert.equal(q(host, "update-status")!.textContent, "Não foi possível verificar atualizações. Tente mais tarde.");
 		assert.ok(!host.textContent!.includes("sensitive"));
 	});
 });

@@ -81,7 +81,7 @@ async function turnInFlight(model: SessionModel): Promise<boolean | null> {
 	}
 }
 
-const STREAM_DROPPED = "The connection dropped before the turn completed.";
+const STREAM_DROPPED = "A conexão caiu antes de o turno terminar.";
 
 /** Mark transport failures without confusing JSON/application bugs with drops. */
 class StreamReadError extends Error {
@@ -293,7 +293,7 @@ export class SessionModel {
 		const providerError =
 			latest?.role === "assistant" && latest.stopReason === "error" &&
 			!this.incompleteUsageIds.has(latest.id) && (!live || latest.id === this.liveFailureId)
-				? { message: latest.errorMessage ?? "An error occurred." }
+				? { message: latest.errorMessage ?? "Ocorreu um erro." }
 				: null;
 		return {
 			messages: projectView(messages, live),
@@ -366,7 +366,7 @@ export class SessionModel {
 		if (event.type === "error") {
 			// Loop-level failure (agent.continue threw outside the stream) —
 			// raw text (owner ruling, Wave D): the banner shows exactly this.
-			this.setError(String(event.errorText ?? "An error occurred."));
+			this.setError(String(event.errorText ?? "Ocorreu um erro."));
 			return false;
 		}
 		const agent = event as unknown as AgentEvent;
@@ -446,7 +446,7 @@ export class SessionModel {
 				const result = agent.result as
 					| { content?: Array<{ type?: string; text?: string }>; details?: unknown }
 					| null;
-				const text = result?.content?.find((c) => c.type === "text")?.text ?? "The tool call failed.";
+				const text = result?.content?.find((c) => c.type === "text")?.text ?? "A chamada da ferramenta falhou.";
 				this.mutate(() => {
 					this.executions = new Map(this.executions).set(agent.toolCallId, {
 						isError: agent.isError,
@@ -477,7 +477,7 @@ export class SessionModel {
 	/** Consume one SSE body to its [DONE] terminal. The turn-settled
 	 *  terminal (stream-route only) fires the settle hook and ends. */
 	async consumeStream(res: Response, controller = this.consumeAbort, allowRecovery = true): Promise<void> {
-		if (!res.body) throw new Error("The turn stream body is empty.");
+		if (!res.body) throw new Error("A resposta do turno veio vazia.");
 		const reader = res.body.getReader();
 		let sawEvent = false;
 		let sawDone = false;
@@ -615,7 +615,7 @@ export class SessionModel {
 			}
 			const res = await this.fetchView(`/api/chats/${encodeURIComponent(this.chatId)}/stream`, controller.signal, !allowRecovery);
 			if (this.consumeAbort !== controller) return;
-			if (!res.ok) throw new Error((await res.text()) || "Failed to attach to the running turn.");
+			if (!res.ok) throw new Error((await res.text()) || "Falha ao conectar ao turno em andamento.");
 			await this.consumeStream(res, controller, allowRecovery);
 		} catch (err) {
 			if (this.consumeAbort !== controller || controller.signal.aborted) return; // intentionally cancelled
@@ -648,12 +648,12 @@ export class SessionModel {
 			try {
 				const res = await this.fetch(`/api/chats/${encodeURIComponent(this.chatId)}`, { signal: controller.signal });
 				if (this.consumeAbort !== controller) return;
-				if (!res.ok) throw new Error((await res.text()) || "An error occurred.");
+				if (!res.ok) throw new Error((await res.text()) || "Ocorreu um erro.");
 				const record = await res.json() as { messages?: LhMessage[]; turnInFlight?: boolean; turnError?: string };
 				if (this.consumeAbort !== controller) return;
 				// No verified record/liveness: retain the draft and never guess
 				// whether a lost acknowledgement meant the input was accepted.
-				if (!Array.isArray(record.messages) || typeof record.turnInFlight !== "boolean") throw new Error("An error occurred.");
+				if (!Array.isArray(record.messages) || typeof record.turnInFlight !== "boolean") throw new Error("Ocorreu um erro.");
 				this.setMessages(record.messages, record.turnError);
 				if (record.turnInFlight) {
 					await this.resumeStream(false);
@@ -711,13 +711,13 @@ export class SessionModel {
 			// connection is Diet A's whole job.
 			const res = await this.postInputEvent(input);
 			if (res.status === 409) {
-				throw new Error("A turn is already running — try again in a moment.");
+				throw new Error("Já há um turno em andamento — tente de novo em instantes.");
 			}
 			if (!res.ok) {
 				// Refusal envelopes (503 BYOK/key gates) and 400s: the RAW body
 				// text rides the error message — the banner shows it, and the
 				// page's refusal flow JSON-parses the envelope out of it.
-				throw new Error((await res.text()) || `The send failed (${res.status}).`);
+				throw new Error((await res.text()) || `Falha ao enviar (${res.status}).`);
 			}
 			// CONNECTION DIET B (owner, 2026-10-10 — parallel-session freeze
 			// postmortem): the POST acknowledges and closes; there is no stream
@@ -784,7 +784,7 @@ export class SessionModel {
 				return;
 			}
 			dropSteer();
-			this.setError((await res.text()) || `The steer failed (${res.status}).`);
+			this.setError((await res.text()) || `Falha ao direcionar (${res.status}).`);
 		} catch (err) {
 			dropSteer();
 			this.setError((err as Error).message);
@@ -816,7 +816,7 @@ export class SessionModel {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ input: { type: "dismiss", toolCallId, answer } }),
 			});
-			if (!res.ok) throw new Error(`The dismissal failed (${res.status}).`);
+			if (!res.ok) throw new Error(`Falha ao dispensar (${res.status}).`);
 		} catch (err) {
 			this.setError((err as Error).message);
 		}
@@ -837,7 +837,7 @@ export class SessionModel {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ input: { type: "dismiss-problem", problemCallId } }),
 			});
-			if (!res.ok) throw new Error(`The dismissal failed (${res.status}).`);
+			if (!res.ok) throw new Error(`Falha ao dispensar (${res.status}).`);
 		} catch (err) {
 			this.setError((err as Error).message);
 		}
