@@ -123,7 +123,7 @@ export function DeleteNodeBody({
 					// refusal banner): border + text, fill on hover.
 					className="rounded-sm border border-destructive/50 bg-destructive/10 px-3 py-1.5 text-xs text-destructive transition-colors hover:bg-destructive/20 disabled:opacity-40"
 				>
-					{busy ? "Deleting…" : "Excluir"}
+					{busy ? "Excluindo…" : "Excluir"}
 				</button>
 			</div>
 		</div>

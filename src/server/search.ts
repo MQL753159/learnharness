@@ -138,20 +138,20 @@ export function resolveSearchEngineFor(
 			return {
 				available: false,
 				engine: null,
-				reason: `search engine is set to "${pinned}" but its API key is missing — set the ${pinned === "tavily" ? "TAVILY_API_KEY" : "BRAVE_API_KEY"} key`,
+				reason: `o mecanismo de busca está definido como "${pinned}", mas falta a chave de API — cadastre a chave ${pinned === "tavily" ? "TAVILY_API_KEY" : "BRAVE_API_KEY"}`,
 				key: null,
 			};
 		}
-		return { available: true, engine: pinned, reason: `search engine: ${pinned} (chosen)`, key: pinnedKey };
+		return { available: true, engine: pinned, reason: `mecanismo de busca: ${pinned} (escolhido)`, key: pinnedKey };
 	}
 	for (const { id } of ENGINE_ORDER) {
 		const key = keys[id] ?? null;
-		if (key) return { available: true, engine: id, reason: `search engine: ${id} (auto)`, key };
+		if (key) return { available: true, engine: id, reason: `mecanismo de busca: ${id} (automático)`, key };
 	}
 	return {
 		available: false,
 		engine: null,
-		reason: "no search engine configured — set a Tavily or Brave search API key",
+		reason: "nenhum mecanismo de busca configurado — cadastre uma chave do Tavily ou do Brave Search",
 		key: null,
 	};
 }

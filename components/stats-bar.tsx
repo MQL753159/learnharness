@@ -145,7 +145,7 @@ export function StatsBar({
 								</span>
 							</div>
 							<div className="flex justify-between gap-2">
-								<span>{subscription ? "Usage" : "Custo total"}</span>
+								<span>{subscription ? "Uso" : "Custo total"}</span>
 								<span className="tabular-nums text-card-foreground">{costLabel}</span>
 							</div>
 							{providers.includes("ChatGPT") && <a href="https://chatgpt.com/settings/usage" target="_blank" rel="noreferrer" className="underline underline-offset-2">Gerenciar uso do ChatGPT</a>}

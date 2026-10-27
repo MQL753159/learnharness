@@ -493,7 +493,7 @@ function ActivityBlobRow({
 					</div>
 					<div className="mt-2 text-muted-foreground/80">
 					{abortState === "failed" && "Falha ao interromper — tente de novo"}
-					{abortState === "pending" && "Stopping…"}
+					{abortState === "pending" && "Parando…"}
 				</div>
 				</div>
 			)}

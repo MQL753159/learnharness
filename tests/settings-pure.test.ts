@@ -26,7 +26,7 @@ import { setupStage } from "../components/setup-dialog.tsx";
 describe("resolveAppearance — delta over factory", () => {
 	it("absent everything = the factory view", () => {
 		const a = resolveAppearance(undefined);
-		assert.equal(a.mode, "dark");
+		assert.equal(a.mode, "light");
 		assert.equal(a.background, null);
 		assert.equal(a.fontFamily, null);
 		assert.equal(a.proseFontSize, 16);
@@ -83,6 +83,7 @@ describe("appearanceVars — the mapping the provider applies", () => {
 	it("full delta: every knob lands on its token", () => {
 		const vars = appearanceVars(
 			resolveAppearance({
+				mode: "dark",
 				background: "#101820",
 				fontFamily: "Georgia",
 				proseFontSize: 18,
@@ -100,6 +101,14 @@ describe("appearanceVars — the mapping the provider applies", () => {
 		assert.equal(vars["--lh-ink-italic"], "#00ff00");
 	});
 
+	it("a custom background in LIGHT mode runs the light curve: cards lighter, fills and edges darker", () => {
+		const vars = appearanceVars(resolveAppearance({ mode: "light", background: "#f0f0f0" }));
+		assert.equal(vars["--card"], "#f9f9f9", "cards +9");
+		assert.equal(vars["--muted"], "#e8e8e8", "muted fills -8");
+		assert.equal(vars["--accent"], "#dfdfdf", "accent -17");
+		assert.equal(vars["--border"], "#d3d3d3", "edges -29");
+	});
+
 	it("sessionNameSerif false alone: titles move, nothing else does", () => {
 		const vars = appearanceVars(resolveAppearance({ sessionNameSerif: false }));
 		assert.equal(vars["--font-title"], "var(--font-prose)");
@@ -111,6 +120,7 @@ describe("staleVarNames — the removal half of application (owner repro: resets
 	it("a full delta applied, then factory: every delta-only name goes stale", () => {
 		const fullDelta = appearanceVars(
 			resolveAppearance({
+				mode: "dark",
 				background: "#101820",
 				fontFamily: "Georgia",
 				sessionNameSerif: false,
@@ -286,7 +296,7 @@ describe("keyStatusLine — the minimal at-a-glance state", () => {
 	});
 
 	it("absent key reads 'not set'", () => {
-		assert.equal(keyStatusLine({ id: "X", info: null, present: false, masked: null, source: "none", shadowedByEnv: false }), "not set");
+		assert.equal(keyStatusLine({ id: "X", info: null, present: false, masked: null, source: "none", shadowedByEnv: false }), "não definida");
 	});
 });
 

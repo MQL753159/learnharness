@@ -202,7 +202,7 @@ export function SetupKeysBody({
 							data-testid="setup-key-save"
 							className="shrink-0 rounded-sm border border-border bg-background px-3 py-1.5 font-ui text-xs text-foreground transition-colors hover:border-muted-foreground/50 disabled:cursor-not-allowed disabled:opacity-40"
 						>
-							{saving ? "Saving…" : "Salvar chave"}
+							{saving ? "Salvando…" : "Salvar chave"}
 						</button>
 					</div>
 				)}
@@ -582,7 +582,7 @@ export function SetupDialog({
 								onClick={() => void save()}
 								className="rounded-sm border border-border bg-background px-3 py-1.5 font-ui text-xs text-foreground transition-colors hover:border-muted-foreground/50 disabled:cursor-not-allowed disabled:opacity-40"
 							>
-								{saving ? "Saving…" : "Salvar modelos"}
+								{saving ? "Salvando…" : "Salvar modelos"}
 							</button>
 							{error && <p className="text-xs text-red-400">{error}</p>}
 						</div>

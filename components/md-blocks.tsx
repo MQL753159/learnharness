@@ -42,6 +42,7 @@ import { MermaidError } from "@/components/mermaid-error";
 import { blurAfterPointerClick } from "@/components/focus-hygiene";
 import { chartSize, useSessionMermaid } from "@/components/session-overlay";
 import { Hint } from "@/components/ui/hint";
+import { useAppearance } from "@/components/settings/appearance";
 
 // ─── The one affordance: the hover-reveal corner copy ────────────────────────
 
@@ -144,6 +145,7 @@ function MermaidInline({ chart }: { chart: string }) {
 	const [attempt, setAttempt] = useState(0);
 	const overlay = useSessionMermaid();
 	const incomplete = useIsCodeFenceIncomplete();
+	const mode = useAppearance().appearance.mode;
 	// The font-parity cap (owner rule, 2026-09-19): the house CSS
 	// (`max-width: 100% !important`) overrides mermaid's own natural-size cap,
 	// so a chart would otherwise stretch to the full column and render its
@@ -166,7 +168,7 @@ function MermaidInline({ chart }: { chart: string }) {
 		let cancelled = false;
 		setSvg(null);
 		setError(null);
-		renderMermaid(chart)
+		renderMermaid(chart, mode)
 			.then((s) => {
 				if (!cancelled) setSvg(s);
 			})
@@ -176,7 +178,7 @@ function MermaidInline({ chart }: { chart: string }) {
 		return () => {
 			cancelled = true;
 		};
-	}, [chart, attempt, incomplete]);
+	}, [chart, attempt, incomplete, mode]);
 
 	if (incomplete || (svg === null && error === null)) {
 		return (
@@ -359,7 +361,7 @@ export function MarkdownBlockquote(props: ComponentProps<"blockquote"> & ExtraPr
 		<div
 			data-testid="md-callout"
 			data-alert-kind={alert.kind}
-			className="my-4 w-fit max-w-full border border-white px-4 py-3 [&> :first-child]:mt-0 [&> :last-child]:mb-0"
+			className="my-4 w-fit max-w-full border border-foreground px-4 py-3 [&> :first-child]:mt-0 [&> :last-child]:mb-0"
 		>
 			{alert.children}
 		</div>

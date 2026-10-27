@@ -29,7 +29,7 @@ describe("LiveToolCard (the working-state grammar)", () => {
 	});
 
 	it("unknown tools stay generic; jobs get their dispatch labels", () => {
-		assert.match(renderToStaticMarkup(<LiveToolCard part={part("mystery_tool", {}) as never} />), /Working…/);
+		assert.match(renderToStaticMarkup(<LiveToolCard part={part("mystery_tool", {}) as never} />), /Trabalhando…/);
 		assert.match(
 			renderToStaticMarkup(<LiveToolCard part={part("research", { query: "x" }) as never} />),
 			/Enviando pesquisa…/,

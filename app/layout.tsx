@@ -18,9 +18,16 @@ export const metadata: Metadata = {
 	description: "Um professor com IA que tem memória — sessões, perguntas e um grafo de conhecimento do que você sabe.",
 };
 
+const MODE_SCRIPT = `try{if(localStorage.getItem("lh:mode")==="dark")document.documentElement.classList.add("dark")}catch(e){}`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="pt-BR" className={`dark ${ui.variable} ${prose.variable}`}>
+		<html lang="pt-BR" className={`${ui.variable} ${prose.variable}`} suppressHydrationWarning>
+			<head>
+				{/* Pre-paint mode (no flash): the appearance provider mirrors the
+				    saved mode to localStorage; light is the default. */}
+				<script dangerouslySetInnerHTML={{ __html: MODE_SCRIPT }} />
+			</head>
 			<body className="min-h-dvh antialiased">
 			{/* The notification channel rides OUTSIDE everything: sidebar, dock,
 				 and pages all subscribe as the polls retire (push S3, 2026-10-02). */}

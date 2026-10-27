@@ -186,19 +186,25 @@ export function AppearanceSection({
 
 	return (
 		<>
-			<SettingsRow label="Modo" hint="Em breve" testid="row-mode" dimmed>
-				<ThinSelect value="dark" ariaLabel="modo" onChange={() => {}} testid="select-mode" disabled>
+			<SettingsRow label="Modo" testid="row-mode">
+				<ThinSelect
+					value={resolved.mode}
+					ariaLabel="modo"
+					onChange={(v) => onSectionChange({ ...appearance, mode: v === "dark" ? "dark" : "light" })}
+					testid="select-mode"
+				>
+					<option value="light">Claro</option>
 					<option value="dark">Escuro</option>
 				</ThinSelect>
 			</SettingsRow>
 			<SettingsRow
 				label="Fundo"
-				hint={`Empty = ${resolved.background ?? "#141414"}`}
+				hint={`Vazio = ${resolved.background ?? (resolved.mode === "dark" ? "#141414" : "#f6f5f2")}`}
 				testid="row-background"
 			>
 				<CommitInput
 					value={appearance?.background ?? ""}
-					placeholder="#141414"
+					placeholder={resolved.mode === "dark" ? "#141414" : "#f6f5f2"}
 					ariaLabel="cor de fundo (hex)"
 					testid="input-background"
 					onCommit={(v) => onSectionChange({ ...appearance, background: v === "" ? null : v })}
@@ -206,7 +212,7 @@ export function AppearanceSection({
 			</SettingsRow>
 			<SettingsRow
 				label="Fonte de leitura"
-				hint={`Empty = ${DEFAULT_READING_FONT}`}
+				hint={`Vazio = ${DEFAULT_READING_FONT}`}
 				testid="row-font"
 			>
 				<span ref={fontMenuOpen ? menuAnchorRef : undefined} className="relative flex items-center gap-2">

@@ -207,7 +207,7 @@ export function AnsweredCard({ answer: savedAnswer, input }: { answer: QuestionA
 						onClick={() => setWhyOpen((v) => !v)}
 						className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
 					>
-						{whyOpen ? "Ocultar o porquê" : "Why"}
+						{whyOpen ? "Ocultar o porquê" : "Por quê?"}
 					</button>
 					{whyOpen && (
 						<div className="mt-1.5 rounded-lg bg-muted py-2 text-sm text-foreground/50">

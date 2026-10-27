@@ -122,7 +122,7 @@ describe("DeleteNodeBody — the minimal screen (owner, 2026-09-30)", () => {
 
 	it("busy: the confirm reads 'Deleting…' and both buttons disable", () => {
 		const html = bodyAt([{ id: "kepler", name: "Kepler's three laws" }], { busy: true });
-		assert.match(html, /Deleting…</);
+		assert.match(html, /Excluindo…</);
 		assert.match(html, /data-testid="node-delete-cancel"[^>]*disabled/);
 		assert.match(html, /data-testid="node-delete-confirm"[^>]*disabled/);
 	});

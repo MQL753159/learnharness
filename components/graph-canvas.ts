@@ -117,6 +117,8 @@ export interface CanvasColors {
 	edge: string;
 	label: string;
 	hoverText: string;
+	/** Light page: region labels darken instead of lighten. */
+	lightMode?: boolean;
 }
 
 export interface CanvasData {
@@ -1725,7 +1727,7 @@ export class GraphCanvasRenderer {
 			const lineH = (settings.clusterLabelSize * REGION_LABEL_LINE_HEIGHT) / k;
 			for (const rm of this.regionMeta) {
 				if (!rm.lines) continue;
-				ctx.fillStyle = `hsla(${rm.hue}, 55%, 78%, 0.85)`;
+				ctx.fillStyle = data.colors.lightMode ? `hsla(${rm.hue}, 55%, 32%, 0.85)` : `hsla(${rm.hue}, 55%, 78%, 0.85)`;
 				const firstOffset = (-(rm.lines.length - 1) / 2) * lineH;
 				for (let i = 0; i < rm.lines.length; i++) {
 					ctx.fillText(rm.lines[i]!, rm.cx, rm.cy + firstOffset + i * lineH);

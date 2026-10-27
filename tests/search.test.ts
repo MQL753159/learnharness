@@ -18,14 +18,14 @@ describe("resolveSearchEngineFor (the auto-detect decision)", () => {
 		const out = resolveSearchEngineFor(undefined, {});
 		assert.ok(!out.available);
 		assert.equal(out.engine, null);
-		assert.match(out.reason, /no search engine configured/i);
+		assert.match(out.reason, /nenhum mecanismo de busca configurado/i);
 	});
 
 	it("a key alone is enough — no engine choice needed", () => {
 		const tav = resolveSearchEngineFor(undefined, { tavily: "tvly-throwaway-key-00001" });
 		assert.ok(tav.available);
 		assert.equal(tav.engine, "tavily");
-		assert.match(tav.reason, /auto/);
+		assert.match(tav.reason, /automático/);
 
 		const brv = resolveSearchEngineFor(undefined, { brave: "brave-throwaway-key-00001" });
 		assert.ok(brv.available);
@@ -48,7 +48,7 @@ describe("resolveSearchEngineFor (the auto-detect decision)", () => {
 		});
 		assert.ok(out.available);
 		assert.equal(out.engine, "brave");
-		assert.match(out.reason, /chosen/);
+		assert.match(out.reason, /escolhido/);
 	});
 
 	it("the explicit pin does NOT silently fall back to the other engine", () => {
@@ -56,7 +56,7 @@ describe("resolveSearchEngineFor (the auto-detect decision)", () => {
 		assert.ok(!out.available);
 		assert.equal(out.engine, null);
 		assert.match(out.reason, /tavily/);
-		assert.match(out.reason, /API key is missing/);
+		assert.match(out.reason, /falta a chave de API/);
 	});
 });
 

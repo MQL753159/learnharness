@@ -20,23 +20,25 @@ import type { MermaidConfig } from "mermaid";
  *  never render larger than the session's own text). */
 export const MERMAID_FONT_SIZE = 16;
 
-// The app is dark-only (html.dark in the root layout) — diagrams render in
-// mermaid's dark theme. (Moved from ai-elements/message.tsx when the
-// renderer became app-owned; the old `mermaid` prop wiring is retired.)
+// Diagrams follow the appearance mode the caller passes (dark = mermaid's
+// dark theme, light = its default theme); callers re-render on a switch. (Moved from
+// ai-elements/message.tsx when the renderer became app-owned; the old
+// `mermaid` prop wiring is retired.)
 export const mermaidTheme: MermaidConfig = {
 	fontFamily: "ui-sans-serif, system-ui, sans-serif",
 	fontSize: MERMAID_FONT_SIZE,
 	securityLevel: "strict",
 	theme: "dark",
 };
+const mermaidLightTheme: MermaidConfig = { ...mermaidTheme, theme: "default" };
 
 const plugin = createMermaidPlugin();
 
 /** Render one chart source to an svg string. The id is unique per call —
  *  mermaid caches rendered ids, and a repeated id across charts/renders
  *  returns the stale svg (the bug streamdown's own id minting avoids). */
-export async function renderMermaid(chart: string): Promise<string> {
+export async function renderMermaid(chart: string, mode: "dark" | "light" = "dark"): Promise<string> {
 	const id = `lh-mermaid-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
-	const { svg } = await plugin.getMermaid(mermaidTheme).render(id, chart);
+	const { svg } = await plugin.getMermaid(mode === "light" ? mermaidLightTheme : mermaidTheme).render(id, chart);
 	return svg;
 }

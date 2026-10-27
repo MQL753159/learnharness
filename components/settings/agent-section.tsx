@@ -112,6 +112,9 @@ interface ModelsBody {
 
 /** Compose: one tool toggled, the rest of the section carried verbatim.
  *  Pure — exported for tests. */
+/** Display names for the toggleable tools (ids stay the schema keys). */
+const TOOL_NAMES_PT: Record<string, string> = { research: "pesquisa", demo: "demonstração", visual: "figura", pdf: "PDF" };
+
 export function composeTool(agent: AgentSettings | undefined, id: string, on: boolean): AgentSettings {
 	return { ...agent, tools: { ...agent?.tools, [id]: on } };
 }
@@ -793,7 +796,7 @@ export function AgentSection({
 				{TOGGLE_TOOLS.map((id) => (
 					<SettingsRow
 						key={id}
-						label={`Tool · ${id}`}
+						label={`Ferramenta · ${TOOL_NAMES_PT[id] ?? id}`}
 						testid={`tool-row-${id}`}
 					>
 						<Toggle

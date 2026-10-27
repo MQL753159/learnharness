@@ -7,9 +7,10 @@
  * Why variables and not className swaps: every seam the settings touch was
  * built token-first (--font-prose, --lh-prose-size, --lh-ink-strong, …),
  * so application is setProperty and nothing re-renders. The ONE thing the
- * variables can't reach — the mode — is dark-only this wave (the light
- * palette is designed in the later design wave; <html class="dark"> is
- * static in app/layout.tsx).
+ * variables can't reach — the mode — toggles <html class="dark"> (light is
+ * the :root palette, dark the .dark one in globals.css). The mode is also
+ * mirrored to localStorage so the pre-paint script in app/layout.tsx picks
+ * the right palette before the settings fetch lands (no flash).
  *
  * The provider is mounted at the ROOT LAYOUT level (like ActivityProvider):
  * every page picks appearance up on load. The settings page writes a
@@ -47,23 +48,27 @@ function raise(hex: string, add: number): string {
 	const n = hex.length === 4
 		? hex.slice(1).split("").map((c) => parseInt(c + c, 16))
 		: [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
-	return `#${n.map((c) => Math.min(255, c + add).toString(16).padStart(2, "0")).join("")}`;
+	return `#${n.map((c) => Math.max(0, Math.min(255, c + add)).toString(16).padStart(2, "0")).join("")}`;
 }
 
-/** The derived palette a chosen background implies (dark curve): background
- *  itself, the raised surfaces (card/popover/secondary/muted, +8), the
- *  accent (+22), the edges (border/input, +47), and primary-foreground
- *  (the inverted text on primary = the background's own color, as today). */
-export function derivedPalette(background: string): Record<string, string> {
-	const card = raise(background, 8);
-	const accent = raise(background, 22);
-	const border = raise(background, 47);
+/** The derived palette a chosen background implies. Dark curve: the
+ *  raised surfaces (card/popover/secondary/muted, +8), the accent (+22),
+ *  the edges (border/input, +47). Light curve (mirrors the light factory
+ *  palette's steps): cards lighter (+9), muted fills darker (-8), accent
+ *  (-17), edges (-29). primary-foreground is the background's own color
+ *  in both (the inverted text on primary). */
+export function derivedPalette(background: string, mode: "dark" | "light" = "dark"): Record<string, string> {
+	const light = mode === "light";
+	const card = raise(background, light ? 9 : 8);
+	const muted = light ? raise(background, -8) : card;
+	const accent = raise(background, light ? -17 : 22);
+	const border = raise(background, light ? -29 : 47);
 	return {
 		"--background": background,
 		"--card": card,
 		"--popover": card,
-		"--secondary": card,
-		"--muted": card,
+		"--secondary": muted,
+		"--muted": muted,
 		"--accent": accent,
 		"--border": border,
 		"--input": border,
@@ -71,12 +76,15 @@ export function derivedPalette(background: string): Record<string, string> {
 	};
 }
 
+/** localStorage key the pre-paint script in app/layout.tsx reads. */
+export const MODE_STORAGE_KEY = "lh:mode";
+
 /** THE mapping: resolved appearance → the CSS variables to set on <html>.
  *  Absent entries = leave the factory stylesheet value in place. Pure —
  *  exported for tests. */
 export function appearanceVars(a: ReturnType<typeof resolveAppearance>): Record<string, string> {
 	const vars: Record<string, string> = {};
-	if (a.background !== null) Object.assign(vars, derivedPalette(a.background));
+	if (a.background !== null) Object.assign(vars, derivedPalette(a.background, a.mode));
 	if (a.fontFamily !== null) {
 		vars["--font-prose"] = `"${a.fontFamily}", var(--font-sans3), ui-sans-serif, system-ui, sans-serif`;
 	}
@@ -125,6 +133,13 @@ export function useAppearance() {
 
 export function AppearanceProvider({ children }: { children: React.ReactNode }) {
 	const [delta, setDelta] = useState<AppearanceSettings | undefined>(undefined);
+	// Until the record lands, the mode is whatever the pre-paint script chose
+	// (the saved mode mirror) — applying the factory mode first would flash
+	// the wrong palette and render diagrams in it.
+	const [loaded, setLoaded] = useState(false);
+	const [initialMode] = useState<"dark" | "light">(() =>
+		typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "dark" : "light",
+	);
 	const appliedRef = useRef<string>("");
 
 	// The vars apply on every change — stringified as the change signal.
@@ -151,6 +166,13 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
 		}
 	}, [key, vars]);
 
+	// The mode is a class, not a variable: .dark swaps the whole palette.
+	const mode = loaded ? resolveAppearance(delta).mode : initialMode;
+	useEffect(() => {
+		document.documentElement.classList.toggle("dark", mode === "dark");
+		try { localStorage.setItem(MODE_STORAGE_KEY, mode); } catch { /* private mode — the class still applies */ }
+	}, [mode]);
+
 	// One fetch per app load: the record (sanitized server-side) carries the
 	// delta; resolution happens here against the compiled factory.
 	useEffect(() => {
@@ -166,8 +188,12 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
 				setDelta(
 					appearance && typeof appearance === "object" ? (appearance as AppearanceSettings) : undefined,
 				);
+				setLoaded(true);
 			})
-			.catch(() => {/* settings stay factory — not worth a crash */});
+			.catch(() => {
+				// settings stay factory — not worth a crash
+				if (alive) setLoaded(true);
+			});
 		return () => {
 			alive = false;
 		};
@@ -178,8 +204,8 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
 	}, []);
 
 	const value = useMemo(
-		() => ({ appearance: resolveAppearance(delta), onAppearanceChange }),
-		[delta, onAppearanceChange],
+		() => ({ appearance: { ...resolveAppearance(delta), mode }, onAppearanceChange }),
+		[delta, mode, onAppearanceChange],
 	);
 	return <AppearanceContext.Provider value={value}>{children}</AppearanceContext.Provider>;
 }

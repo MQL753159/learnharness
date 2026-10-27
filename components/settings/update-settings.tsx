@@ -84,7 +84,7 @@ export function UpdateSettings({
 	return (
 		<>
 			<SettingsRow
-				label={`Version ${version || "unknown"}`}
+				label={`Versão ${version || "desconhecida"}`}
 				testid="row-version"
 				hint={
 					<>

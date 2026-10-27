@@ -77,6 +77,7 @@ import { MenuShell } from "@/components/menu-shell.tsx";
 import { DeleteNodeDialog } from "@/components/delete-node-dialog.tsx";
 import { ChainTableOverlay } from "@/components/chain-table.tsx";
 import { Hint } from "@/components/ui/hint";
+import { useAppearance } from "@/components/settings/appearance";
 import {
 	ARROW_LENGTH_LADDER,
 	CHARGE_RANGE,
@@ -940,7 +941,7 @@ export function GraphChromeRow({
 					className="flex h-7 items-center gap-1.5 rounded-lg px-2.5 text-xs text-muted-foreground transition-colors hover:bg-accent disabled:opacity-50"
 				>
 						<UploadIcon className="size-3" />
-						{importing ? "Importing…" : "Importar anotações…"}
+						{importing ? "Importando…" : "Importar anotações…"}
 					</button>
 				</Hint>
 			</div>
@@ -1408,6 +1409,7 @@ export function GraphView({
 		};
 	}, [isEmpty]);
 
+	const mode = useAppearance().appearance.mode;
 	// Feed #1 — data: positions + edges + clusters + resolved colors. Runs
 	// after the layout effect (same commit, declaration order) and after
 	// the construct effect, so the renderer exists and positions are fresh.
@@ -1431,11 +1433,13 @@ export function GraphView({
 				edge: tokenHex("--ring"),
 				label: tokenHex("--muted-foreground"),
 				hoverText: tokenHex("--foreground"),
+				lightMode: mode === "light",
 			},
 			// Match the app typography (Geist via the body's stack).
 			fontFamily: getComputedStyle(document.body).fontFamily,
 		});
-	}, [snapshot, isEmpty]);
+		// mode: the tokens resolve differently per palette — re-read on switch.
+	}, [snapshot, isEmpty, mode]);
 
 	// Feed #2 — settings: just marks the frame dirty. No rebuild, no
 	// re-layout, no camera touch (the whole point of the new renderer).

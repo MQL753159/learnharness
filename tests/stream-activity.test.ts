@@ -38,7 +38,7 @@ describe("streamingToolActivity (the turn-activity label)", () => {
 		assert.equal(streamingToolActivity([msg("assistant", [toolPart("pdf", "input-streaming")])]), "Lendo um PDF…");
 		assert.equal(
 			streamingToolActivity([msg("assistant", [toolPart("mystery_tool", "input-streaming")])]),
-			"Working…",
+			"Trabalhando…",
 		);
 	});
 

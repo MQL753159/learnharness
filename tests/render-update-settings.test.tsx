@@ -93,7 +93,7 @@ describe("version and contextual copy", () => {
 describe("General update rows", () => {
 	it("browser/SSR shows version and installed-version release notes, without inactive controls or claims", () => {
 		const html = renderToStaticMarkup(<UpdateSettings {...props} />);
-		assert.ok(html.includes("Version 0.3.7"));
+		assert.ok(html.includes("Versão 0.3.7"));
 		assert.ok(html.includes(`${props.homepage}/releases/tag/v0.3.7`));
 		assert.ok(!html.includes("update-check")); assert.ok(!html.includes("row-auto-update"));
 		assert.ok(!html.includes(MANUAL_UPDATE_HINT)); assert.ok(!html.includes("update-status"));
